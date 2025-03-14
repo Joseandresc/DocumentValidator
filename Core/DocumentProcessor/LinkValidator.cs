@@ -74,15 +74,15 @@ namespace DocumentValidator.Core.DocumentProcessor
                                     results.Add(result);
                                    // _logger.LogInformation($"URL validation result: {url} - {(isValid ? "Valid" : "Invalid")} ({(int)response.StatusCode})");
                                 }
-                                catch (UriFormatException uriEx)
-                                {
+                                    catch (NotSupportedException ex) when (ex.Message.Contains("rhttps"))
+                                    {
 
                                         var result = new LinkValidationResult
                                         {
                                             Url = url.ToString(),
                                             IsValid = false,
                                             StatusCode = 0, // Indicating no HTTP response was received
-                                            ErrorMessage = $"Invalid URI: {uriEx.Message}"
+                                            ErrorMessage = $"Invalid URI: {ex.Message}"
                                         };
 
                                         results.Add(result);
