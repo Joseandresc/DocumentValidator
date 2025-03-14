@@ -74,22 +74,29 @@ namespace DocumentValidator.Core.DocumentProcessor
                                     results.Add(result);
                                    // _logger.LogInformation($"URL validation result: {url} - {(isValid ? "Valid" : "Invalid")} ({(int)response.StatusCode})");
                                 }
-                                catch (Exception ex)
+                                catch (UriFormatException uriEx)
                                 {
-                                    
-                                    throw;
-                                   
-                                }
+
+                                        var result = new LinkValidationResult
+                                        {
+                                            Url = url.ToString(),
+                                            IsValid = false,
+                                            StatusCode = 0, // Indicating no HTTP response was received
+                                            ErrorMessage = $"Invalid URI: {uriEx.Message}"
+                                        };
+
+                                        results.Add(result);
+
+                                    }
                             }
+
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-               // _logger.LogError($"Error opening document: {ex.Message}");
-               // _logger.LogError($"Stack trace: {ex.StackTrace}");
-                throw;
+               
             }
 
             return results;
