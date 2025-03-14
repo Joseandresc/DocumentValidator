@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentValidator.Core.DocumentProcessor;
+using DocumentValidator.Core.ResultGenerator;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -63,7 +64,10 @@ namespace DocumentValidator.ViewModels
         {
             // Call the method to validate hyperlinks
              var linkValidator = new LinkValidator();
-            await linkValidator.ValidateDocumentLinks(documentStream);
+             var results = await linkValidator.ValidateDocumentLinks(documentStream);
+            // Generate the results file
+            var resultsFileGenerator = new ResultsFileGenerator();
+            await resultsFileGenerator.GenerateWorkbookAsync(results);
         }
     }
 }
