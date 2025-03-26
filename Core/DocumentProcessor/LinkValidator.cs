@@ -5,9 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Bibliography;
 using DocumentFormat.OpenXml.ExtendedProperties;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
+using DocumentValidator.ViewModels;
 using Microsoft.Extensions.Logging;
 using Xceed.Document.NET;
 using Xceed.Words.NET;
@@ -17,15 +19,19 @@ namespace DocumentValidator.Core.DocumentProcessor
 
     public class LinkValidator
     {
+        //Injecting DocumentViewModel to update the UI
+        private readonly DocumentViewModel _documentViewModel;
+
         private readonly HttpClient _httpClient;
 
-
-        public LinkValidator()
+        public LinkValidator(DocumentViewModel documentViewModel)
         {
             _httpClient = new HttpClient();
+            _documentViewModel = documentViewModel;
         }
         public async Task<List<LinkValidationResult>> ValidateDocumentLinks(Stream documentStream)
         {
+
             var results = new List<LinkValidationResult>();
             try
             {
@@ -61,7 +67,13 @@ namespace DocumentValidator.Core.DocumentProcessor
                                     try
                                 {
                                     var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
-                                    bool isValid = response.IsSuccessStatusCode;
+                                        //For UI to be updated, the call should happen in the main thread.
+                                        MainThread.BeginInvokeOnMainThread(() =>
+                                        {
+                                            _documentViewModel.AddLogMessage($"Validating URL: {url} - status code is: {response.StatusCode}");
+                                        });
+
+                                        bool isValid = response.IsSuccessStatusCode;
 
                                     var result = new LinkValidationResult
                                     {

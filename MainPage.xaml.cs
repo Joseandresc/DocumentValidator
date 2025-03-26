@@ -10,7 +10,7 @@ namespace DocumentValidator
     {
         int count = 0;
 
-        public MainPage()
+        public MainPage( )
         {
             InitializeComponent();
             BindingContext = new DocumentViewModel();
