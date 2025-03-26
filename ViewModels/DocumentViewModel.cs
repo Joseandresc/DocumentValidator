@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentValidator.Core.DocumentProcessor;
+using DocumentValidator.Core.FormatValidatorProcessor;
 using DocumentValidator.Core.ResultGenerator;
 using Microsoft.Extensions.Logging;
 using System;
@@ -19,10 +20,9 @@ namespace DocumentValidator.ViewModels
     public class DocumentViewModel : INotifyPropertyChanged
 
     {
+        #region Properties
         //Observable collection stores log messages that we bind to the UI
         public ObservableCollection<string> LogMessages { get; } = new ObservableCollection<string>();
-
-        private string _validationResult;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -42,6 +42,7 @@ namespace DocumentValidator.ViewModels
                 }
             }
         }
+        #endregion
 
         //generate constructor
         public DocumentViewModel()
@@ -72,9 +73,9 @@ namespace DocumentValidator.ViewModels
                 if (result != null)
                 {
                     using var stream = await result.OpenReadAsync();
-                   
-                    await ValidateDocumentLinksAsync(stream);
 
+                    //await ValidateDocumentLinksAsync(stream);
+                    await ValidateTableFormatAsync(stream);
                 }
             }
             catch (Exception ex)
@@ -93,12 +94,22 @@ namespace DocumentValidator.ViewModels
             // Indicate that processing has started.
             IsProcessing = true;
             // Call the method to validate hyperlinks
-             var linkValidator = new LinkValidator(this);
-             var results = await linkValidator.ValidateDocumentLinks(documentStream);
+            var linkValidator = new LinkValidator(this);
+            var results = await linkValidator.ValidateDocumentLinks(documentStream);
             // Generate the results file
             var resultsFileGenerator = new ResultsFileGenerator();
             await resultsFileGenerator.GenerateWorkbookAsync(results);
             IsProcessing = false;
+        }
+
+        private async Task ValidateTableFormatAsync(Stream documentStream)
+        {
+            // Indicate that processing has started.
+            IsProcessing = true;
+             TableFormatValidator tableValidator = new TableFormatValidator();
+             await tableValidator.TableFormatValidation(documentStream);
+            IsProcessing = false;
+
         }
     }
 }
