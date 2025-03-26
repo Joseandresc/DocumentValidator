@@ -4,29 +4,54 @@ using DocumentValidator.Core.ResultGenerator;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace DocumentValidator.ViewModels
 {
-    internal class DocumentViewModel 
+    public class DocumentViewModel : INotifyPropertyChanged
+
     {
-        
+        //Observable collection stores log messages that we bind to the UI
+        public ObservableCollection<string> LogMessages { get; } = new ObservableCollection<string>();
+
         private string _validationResult;
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
         public ICommand ValidateCommand { get; private set; }
         public ICommand SelectDocumentCommand { get; private set; }
+        private bool _isProcessing;
 
-        
+        public bool IsProcessing
+        {
+            get => _isProcessing;
+            set
+            {
+                if (_isProcessing != value)
+                {
+                    _isProcessing = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         //generate constructor
         public DocumentViewModel()
         {
             ValidateCommand = new Command<Stream>(async (documentStream) => await ValidateDocumentLinksAsync(documentStream));
             SelectDocumentCommand = new Command(async () => await OnSelectDocumentAsync());
+        }
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         private async Task OnSelectDocumentAsync()
         {
@@ -58,16 +83,22 @@ namespace DocumentValidator.ViewModels
             }
         }
 
-
+        public void AddLogMessage(string message)
+        {
+            LogMessages.Add(message);
+        }
 
         private async Task ValidateDocumentLinksAsync(Stream documentStream)
         {
+            // Indicate that processing has started.
+            IsProcessing = true;
             // Call the method to validate hyperlinks
-             var linkValidator = new LinkValidator();
+             var linkValidator = new LinkValidator(this);
              var results = await linkValidator.ValidateDocumentLinks(documentStream);
             // Generate the results file
             var resultsFileGenerator = new ResultsFileGenerator();
             await resultsFileGenerator.GenerateWorkbookAsync(results);
+            IsProcessing = false;
         }
     }
 }

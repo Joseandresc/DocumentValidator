@@ -2,41 +2,75 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DocumentValidator.MainPage">
-
     <ScrollView>
-        <VerticalStackLayout
-            Padding="30,0"
-            Spacing="25">
-            <Image
-                x:Name="MyImage"
-                Source="dotnet_bot.png"
-                HeightRequest="185"
-                Aspect="AspectFit"
-                SemanticProperties.Description="dot net bot in a race car number eight" />
+        <VerticalStackLayout Padding="30,0" Spacing="25">
+            <StackLayout Padding="30">
+                <CollectionView ItemsSource="{Binding LogMessages}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Label Text="{Binding .}" />
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </StackLayout>
+            <Image x:Name="MyImage"
+                   Source="doc.jpg"
+                   HeightRequest="185"
+                   Aspect="AspectFit"
+                   SemanticProperties.Description="dot net bot in a race car number eight" />
 
-            <Label
-                Text="Hello, World!"
-                Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1" />
+            <Label Text="Document Validator"
+                   Style="{StaticResource Headline}"
+                   SemanticProperties.HeadingLevel="Level1" />
 
-            <Label
-                Text="Welcome to &#10;.NET Multi-platform App UI"
-                Style="{StaticResource SubHeadline}"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I" />
+            <Label Text="Document Validator 2"
+                   Style="{StaticResource SubHeadline}"
+                   SemanticProperties.HeadingLevel="Level2"
+                   SemanticProperties.Description="Document validator" />
 
-     
-            <Button
-    x:Name="StartValidateBtn"
-    Text="Select a document validation" 
-    SemanticProperties.Hint="Counts the number of times you click"
-    Command="{Binding SelectDocumentCommand}"
-    HorizontalOptions="Fill" />
+            <!-- Grid layout for the toggle and text field -->
+            <Grid HorizontalOptions="Center" ColumnSpacing="10">
+                <!-- Define three columns: Auto for the label, star for the entry, and Auto for the switch -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
+                <!-- Label in the first column -->
+                <Label Text="Semantic Validation" 
+                       VerticalOptions="Center" 
+                       Grid.Column="0" />
 
+                <!-- Entry field in the second column -->
+                <Entry x:Name="SemanticValidationTextEntry"
+                       Placeholder="Enter Open AI key here"
+                       VerticalOptions="Center"
+                       Grid.Column="1" />
 
-
+                <!-- Switch in the third column -->
+                <Switch x:Name="SemanticValidationSwitch" 
+                        VerticalOptions="Center"
+                        Grid.Column="2" />
+            </Grid>
+            <!-- This Grid holds the ActivityIndicator and a Label for the "Validation in Progress" message -->
+            <Grid IsVisible="{Binding IsProcessing,Mode=OneWay}">
+                <!-- The ActivityIndicator shows a spinning animation -->
+                <ActivityIndicator x:Name="ValidationActivityIndicator"
+                         IsRunning="{Binding IsProcessing,Mode=OneWay}"
+                         HorizontalOptions="Center"
+                         VerticalOptions="Center"/>
+                <!-- Label overlaying or placed below the spinner -->
+                <Label Text="Validation in Progress..."
+             HorizontalOptions="Center"
+             VerticalOptions="Center"
+             Margin="0,60,0,0"/>
+            </Grid>
+            <Button x:Name="StartValidateBtn"
+                    Text="Select a .docx document for validation" 
+                    SemanticProperties.Hint="Counts the number of times you click"
+                    Command="{Binding SelectDocumentCommand}"
+                    HorizontalOptions="Fill" />
         </VerticalStackLayout>
     </ScrollView>
-
 </ContentPage>
