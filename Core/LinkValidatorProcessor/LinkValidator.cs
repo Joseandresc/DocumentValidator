@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Bibliography;
-using DocumentFormat.OpenXml.ExtendedProperties;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Wordprocessing;
+﻿
+using DocumentValidator.Utils;
 using DocumentValidator.ViewModels;
 using Microsoft.Extensions.Logging;
 using Xceed.Document.NET;
@@ -19,6 +10,7 @@ namespace DocumentValidator.Core.DocumentProcessor
 
     public class LinkValidator
     {
+        StreamToDocx converter = new StreamToDocx();
         //Injecting DocumentViewModel to update the UI
         private readonly DocumentViewModel _documentViewModel;
 
@@ -31,27 +23,12 @@ namespace DocumentValidator.Core.DocumentProcessor
         }
         public async Task<List<LinkValidationResult>> ValidateDocumentLinks(Stream documentStream)
         {
+            DocX document = await converter.StreamToDocxConverter(documentStream);
 
             var results = new List<LinkValidationResult>();
             try
             {
-                // Create a new MemoryStream with the entire content
-                documentStream.Position = 0;
-                byte[] docBytes = new byte[documentStream.Length];
-                await documentStream.ReadAsync(docBytes, 0, docBytes.Length);
                 
-
-                // Create a MemoryStream copy to ensure we have a complete stream to work with
-                using (var memoryStream = new MemoryStream(docBytes))
-                {
-                    
-                    
-
-                    using (DocX document = DocX.Load(memoryStream))
-                    {
-                        //  _logger.LogInformation("Document opened successfully");
-
-                        // Get all hyperlinks in the document
                         var hyperlinks = document.Hyperlinks;
                         if (hyperlinks != null && hyperlinks.Count > 0)
                         {
@@ -67,11 +44,7 @@ namespace DocumentValidator.Core.DocumentProcessor
                                     try
                                 {
                                     var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
-                                        //For UI to be updated, the call should happen in the main thread.
-                                        MainThread.BeginInvokeOnMainThread(() =>
-                                        {
-                                            _documentViewModel.AddLogMessage($"Validating URL: {url} - status code is: {response.StatusCode}");
-                                        });
+                                        
 
                                         bool isValid = response.IsSuccessStatusCode;
 
@@ -82,7 +55,14 @@ namespace DocumentValidator.Core.DocumentProcessor
                                         StatusCode = (int)response.StatusCode,
                                         ErrorMessage = isValid ? null : $"HTTP Status: {response.StatusCode}"
                                     };
-
+                                    if(!isValid)
+                                        {
+                                            //For UI to be updated, the call should happen in the main thread.
+                                            MainThread.BeginInvokeOnMainThread(() =>
+                                            {
+                                                _documentViewModel.AddLogMessage($"Validating URL: {url} - status code is: {response.StatusCode}");
+                                            });
+                                        }
                                     results.Add(result);
                                    // _logger.LogInformation($"URL validation result: {url} - {(isValid ? "Valid" : "Invalid")} ({(int)response.StatusCode})");
                                 }
@@ -96,15 +76,19 @@ namespace DocumentValidator.Core.DocumentProcessor
                                             StatusCode = 0, // Indicating no HTTP response was received
                                             ErrorMessage = $"Invalid URI: {ex.Message}"
                                         };
-
+                                        //For UI to be updated, the call should happen in the main thread.
+                                        MainThread.BeginInvokeOnMainThread(() =>
+                                        {
+                                            _documentViewModel.AddLogMessage($"Validating URL: {url} - status code is: {ex.Message}");
+                                        });
                                         results.Add(result);
 
                                     }
                             }
 
                         }
-                    }
-                }
+                    
+                
             }
             catch (Exception ex)
             {
