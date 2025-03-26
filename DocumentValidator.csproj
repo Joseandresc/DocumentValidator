@@ -65,7 +65,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Integrations\" />
+	  <Folder Include="Core\SemanticValidatorProcessor\" />
 	  <Folder Include="Tests\" />
 	</ItemGroup>
 
