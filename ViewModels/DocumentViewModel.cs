@@ -50,7 +50,7 @@ namespace DocumentValidator.ViewModels
             ValidateCommand = new Command<Stream>(async (documentStream) => await ValidateDocumentLinksAsync(documentStream));
             SelectDocumentCommand = new Command(async () => await OnSelectDocumentAsync());
         }
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -74,13 +74,14 @@ namespace DocumentValidator.ViewModels
                 {
                     using var stream = await result.OpenReadAsync();
 
-                    //await ValidateDocumentLinksAsync(stream);
-                    await ValidateTableFormatAsync(stream);
+                    await ValidateDocumentLinksAsync(stream);
+                    //await ValidateTableFormatAsync(stream);
                 }
             }
             catch (Exception ex)
             {
                 // Handle exceptions as needed
+                LogMessages.Add($"Error: {ex.Message}");
             }
         }
 

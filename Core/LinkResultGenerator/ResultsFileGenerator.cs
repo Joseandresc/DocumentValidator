@@ -61,6 +61,7 @@ namespace DocumentValidator.Core.ResultGenerator
                 Row headerRow = new Row();
                 headerRow.Append(
                     new DocumentFormat.OpenXml.Spreadsheet.Cell() { CellValue = new CellValue("URL"), DataType = CellValues.String },
+                    new DocumentFormat.OpenXml.Spreadsheet.Cell() { CellValue = new CellValue("LinkText"), DataType = CellValues.String },
                     new DocumentFormat.OpenXml.Spreadsheet.Cell() { CellValue = new CellValue("Is Valid"), DataType = CellValues.String },
                     new DocumentFormat.OpenXml.Spreadsheet.Cell() { CellValue = new CellValue("Status Code"), DataType = CellValues.String },
                     new DocumentFormat.OpenXml.Spreadsheet.Cell() { CellValue = new CellValue("Error Message"), DataType = CellValues.String }
@@ -74,6 +75,7 @@ namespace DocumentValidator.Core.ResultGenerator
                    
                     dataRow.Append(
                         new DocumentFormat.OpenXml.Spreadsheet.Cell() { CellValue = new CellValue(result.Url), DataType = CellValues.String },
+                        new DocumentFormat.OpenXml.Spreadsheet.Cell() { CellValue = new CellValue(result.LinkText), DataType = CellValues.String },
                         new DocumentFormat.OpenXml.Spreadsheet.Cell() { CellValue = new CellValue(result.IsValid.ToString()), DataType = CellValues.Boolean },
                         new DocumentFormat.OpenXml.Spreadsheet.Cell() { CellValue = new CellValue(result.StatusCode.ToString()), DataType = CellValues.Number },
                         new DocumentFormat.OpenXml.Spreadsheet.Cell() { CellValue = new CellValue(result.ErrorMessage), DataType = CellValues.String }

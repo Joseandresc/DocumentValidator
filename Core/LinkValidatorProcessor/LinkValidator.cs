@@ -51,6 +51,7 @@ namespace DocumentValidator.Core.DocumentProcessor
                                     var result = new LinkValidationResult
                                     {
                                         Url = url.AbsoluteUri,
+                                        LinkText = hyperlink.Text,
                                         IsValid = isValid,
                                         StatusCode = (int)response.StatusCode,
                                         ErrorMessage = isValid ? null : $"HTTP Status: {response.StatusCode}"
@@ -72,6 +73,7 @@ namespace DocumentValidator.Core.DocumentProcessor
                                         var result = new LinkValidationResult
                                         {
                                             Url = url.ToString(),
+                                            LinkText = hyperlink.Text,
                                             IsValid = false,
                                             StatusCode = 0, // Indicating no HTTP response was received
                                             ErrorMessage = $"Invalid URI: {ex.Message}"
@@ -92,7 +94,8 @@ namespace DocumentValidator.Core.DocumentProcessor
             }
             catch (Exception ex)
             {
-               
+               Console.WriteLine($"An error occurred while validating links: {ex.Message}");
+                // Log the exception or handle it as needed
             }
 
             return results;
