@@ -1,18 +1,11 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentValidator.Core.DocumentProcessor;
+﻿using DocumentValidator.Core.DocumentProcessor;
 using DocumentValidator.Core.FormatValidatorProcessor;
 using DocumentValidator.Core.ResultGenerator;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
+using DocumentValidator.Core.SemanticValidatorProcessor;
+using Microsoft.Extensions.Configuration;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace DocumentValidator.ViewModels
@@ -25,10 +18,21 @@ namespace DocumentValidator.ViewModels
         public ObservableCollection<string> LogMessages { get; } = new ObservableCollection<string>();
 
         public event PropertyChangedEventHandler? PropertyChanged;
-
+        private readonly IConfiguration _configuration;
         public ICommand ValidateCommand { get; private set; }
         public ICommand SelectDocumentCommand { get; private set; }
         private bool _isProcessing;
+        private readonly SemanticValidatorProcessor _semanticValidatorProcessor;
+        private bool _isImageVisible = true;
+        public bool IsImageVisible
+        {
+            get => _isImageVisible;
+            set
+            {
+                _isImageVisible = value;
+                OnPropertyChanged(nameof(IsImageVisible));
+            }
+        }
 
         public bool IsProcessing
         {
@@ -42,6 +46,19 @@ namespace DocumentValidator.ViewModels
                 }
             }
         }
+        private bool _isAIValidationEnabled;
+        public bool IsAIValidationEnabled
+        {
+            get => _isAIValidationEnabled;
+            set
+            {
+                if (_isAIValidationEnabled != value)
+                {
+                    _isAIValidationEnabled = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         #endregion
 
         //generate constructor
@@ -50,6 +67,7 @@ namespace DocumentValidator.ViewModels
             ValidateCommand = new Command<Stream>(async (documentStream) => await ValidateDocumentLinksAsync(documentStream));
             SelectDocumentCommand = new Command(async () => await OnSelectDocumentAsync());
         }
+    
         protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -75,6 +93,12 @@ namespace DocumentValidator.ViewModels
                     using var stream = await result.OpenReadAsync();
 
                     await ValidateDocumentLinksAsync(stream);
+                    if(IsAIValidationEnabled)
+                    {
+                        //await ValidateTableFormatAsync(stream);
+                        await ValidateSemanticDocumentAsync(stream);
+                    }
+                   
                     //await ValidateTableFormatAsync(stream);
                 }
             }
@@ -94,12 +118,15 @@ namespace DocumentValidator.ViewModels
         {
             // Indicate that processing has started.
             IsProcessing = true;
+            IsImageVisible = false;  // Hide when validation starts
+
             // Call the method to validate hyperlinks
             var linkValidator = new LinkValidator(this);
             var results = await linkValidator.ValidateDocumentLinks(documentStream);
             // Generate the results file
             var resultsFileGenerator = new ResultsFileGenerator();
-            await resultsFileGenerator.GenerateWorkbookAsync(results);
+            //await resultsFileGenerator.GenerateWorkbookAsync(results);
+            await HTMLResultsGenerator.GenerateHtmlReportAsync(results);
             IsProcessing = false;
         }
 
@@ -111,6 +138,14 @@ namespace DocumentValidator.ViewModels
              await tableValidator.TableFormatValidation(documentStream);
             IsProcessing = false;
 
+        }
+
+        private async Task ValidateSemanticDocumentAsync(Stream documentStream)
+        {
+            IsProcessing = true;
+            SemanticValidatorProcessor semanticValidator = new SemanticValidatorProcessor(this);
+            await semanticValidator.EvaluateDocumentAsync(documentStream);
+            IsProcessing = false;
         }
     }
 }

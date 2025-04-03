@@ -4,6 +4,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentValidator.Core.DocumentProcessor;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
+using DocumentValidator.Utils; 
 
 namespace DocumentValidator.Core.ResultGenerator
 {
@@ -14,13 +15,10 @@ namespace DocumentValidator.Core.ResultGenerator
         public async Task GenerateWorkbookAsync(List<LinkValidationResult> results)
         {
             // Retrieve the Downloads folder path
-            string userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            string downloadsPath = System.IO.Path.Combine(userProfile, "Downloads");
-           // string downloadsPath = @"C:\temp";
-
+            
             // Define the file name and path
             string fileName = Guid.NewGuid().ToString()+".xlsx";
-            string filePath = Path.Combine(downloadsPath, fileName);
+            string filePath = Path.Combine(GetDownloadLocation.GetDownloadsFolderPath(), fileName);
             using (SpreadsheetDocument document = SpreadsheetDocument.Create(filePath, SpreadsheetDocumentType.Workbook))
             {
                 // Add a WorkbookPart to the document.
