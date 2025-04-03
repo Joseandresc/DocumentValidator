@@ -33,24 +33,18 @@ namespace DocumentValidator.Core.FormatValidatorProcessor
                 {
                     for (int i = 0; i < table.ColumnCount; i++)
                     {
-                        columnWidths[i] = 260; // Set each column width to 100 points
+                        columnWidths[i] = 260; 
                     }
                 }
                 else
                 {
                     for (int i = 0; i < table.ColumnCount; i++)
                     {
-                        columnWidths[i] = 130; // Set each column width to 100 points
+                        columnWidths[i] = 130; 
                     }
                 }
                 table.Alignment = Alignment.center;
                 table.SetWidths(columnWidths, true);
-
-                // Set row heights
-                //foreach (Row row in table.Rows)
-                //{
-                //    row.Height = 20; // Set row height to 20 points
-                //}
             }
             document.SaveAs(filePath);
 

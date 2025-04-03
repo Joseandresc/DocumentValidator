@@ -13,64 +13,141 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
             </StackLayout>
-            <Image x:Name="MyImage"
-                   Source="doc.jpg"
-                   HeightRequest="185"
-                   Aspect="AspectFit"
-                   SemanticProperties.Description="dot net bot in a race car number eight" />
+            <Grid  IsVisible="{Binding IsImageVisible}"
+>
+                <Image x:Name="IconImage1"
+           Source="doc.png"
+           Opacity="1"
+           WidthRequest="300"
+           HeightRequest="300"          
+           Aspect="AspectFit"
+           VerticalOptions="Center"
+           HorizontalOptions="Center"/>
+
+                <Image x:Name="IconImage2"
+           Source="doc1.png"
+           Opacity="0"
+            WidthRequest="300"
+            HeightRequest="300"
+           Aspect="AspectFit"
+           VerticalOptions="Center"
+           HorizontalOptions="Center"/>
+            </Grid>
+
 
             <Label Text="Document Validator"
                    Style="{StaticResource Headline}"
                    SemanticProperties.HeadingLevel="Level1" />
+            <ContentPage.Background>
+                <LinearGradientBrush>
+                    <GradientStop Color="#4A90E2" Offset="0.0" />
+                    <GradientStop Color="#D1E8FF" Offset="1.0" />
+                    <!-- Lighter Gray -->
+                </LinearGradientBrush>
+            </ContentPage.Background>
 
-            <Label Text="Document Validator 2"
-                   Style="{StaticResource SubHeadline}"
-                   SemanticProperties.HeadingLevel="Level2"
-                   SemanticProperties.Description="Document validator" />
 
-            <!-- Grid layout for the toggle and text field -->
-            <Grid HorizontalOptions="Center" ColumnSpacing="10">
-                <!-- Define three columns: Auto for the label, star for the entry, and Auto for the switch -->
+
+
+            <Grid HorizontalOptions="Center" ColumnSpacing="20" RowSpacing="10" IsVisible="{Binding IsImageVisible}">
+                <!-- Define three columns: Label | Input Field | Toggle -->
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Label in the first column -->
-                <Label Text="Semantic Validation" 
-                       VerticalOptions="Center" 
-                       Grid.Column="0" />
+                <!-- Define two rows for the two settings -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-                <!-- Entry field in the second column -->
-                <Entry x:Name="SemanticValidationTextEntry"
-                       Placeholder="Enter Open AI key here"
-                       VerticalOptions="Center"
-                       Grid.Column="1" />
+                <!-- Row 1: Semantic Validation -->
+                <Label Text="Semantic Validation" VerticalOptions="Center" Grid.Row="0" Grid.Column="0"/>
+                <Switch x:Name="SemanticValidationSwitch" VerticalOptions="Center" Grid.Row="0" Grid.Column="2" IsToggled="{Binding IsAIValidationEnabled}">
+                    >
+                    <Switch.Resources>
+                        <Style TargetType="Switch">
+                            <Style.Triggers>
+                                <DataTrigger TargetType="Switch" Binding="{Binding IsToggled, Source={x:Reference SemanticValidationSwitch}}" Value="True">
+                                    <Setter Property="ThumbColor" Value="White"/>
+                                    <Setter Property="OnColor" Value="Green"/>
+                                </DataTrigger>
+                                <DataTrigger TargetType="Switch" Binding="{Binding IsToggled, Source={x:Reference SemanticValidationSwitch}}" Value="False">
+                                    <Setter Property="ThumbColor" Value="Black"/>
+                                    <Setter Property="OnColor" Value="LightGray"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                            <Setter Property="WidthRequest" Value="60"/>
+                            <Setter Property="HeightRequest" Value="30"/>
+                        </Style>
+                    </Switch.Resources>
+                </Switch>
 
-                <!-- Switch in the third column -->
-                <Switch x:Name="SemanticValidationSwitch" 
-                        VerticalOptions="Center"
-                        Grid.Column="2" />
+                <!-- Row 2: Table Auto Format -->
+                <Label Text="Table Auto Format" VerticalOptions="Center" Grid.Row="1" Grid.Column="0"/>
+                <Switch x:Name="TableAutoFormatSwitch" VerticalOptions="Center" Grid.Row="1" Grid.Column="2" IsToggled="False">
+                    <Switch.Resources>
+                        <Style TargetType="Switch">
+                            <Style.Triggers>
+                                <DataTrigger TargetType="Switch" Binding="{Binding IsToggled, Source={x:Reference TableAutoFormatSwitch}}" Value="True">
+                                    <Setter Property="ThumbColor" Value="White"/>
+                                    <Setter Property="OnColor" Value="Green"/>
+                                </DataTrigger>
+                                <DataTrigger TargetType="Switch" Binding="{Binding IsToggled, Source={x:Reference TableAutoFormatSwitch}}" Value="False">
+                                    <Setter Property="ThumbColor" Value="Black"/>
+                                    <Setter Property="OnColor" Value="LightGray"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                            <Setter Property="WidthRequest" Value="60"/>
+                            <Setter Property="HeightRequest" Value="30"/>
+                        </Style>
+                    </Switch.Resources>
+                </Switch>
             </Grid>
+
             <!-- This Grid holds the ActivityIndicator and a Label for the "Validation in Progress" message -->
-            <Grid IsVisible="{Binding IsProcessing,Mode=OneWay}">
-                <!-- The ActivityIndicator shows a spinning animation -->
-                <ActivityIndicator x:Name="ValidationActivityIndicator"
-                         IsRunning="{Binding IsProcessing,Mode=OneWay}"
-                         HorizontalOptions="Center"
-                         VerticalOptions="Center"/>
-                <!-- Label overlaying or placed below the spinner -->
-                <Label Text="Validation in Progress..."
-             HorizontalOptions="Center"
-             VerticalOptions="Center"
-             Margin="0,60,0,0"/>
-            </Grid>
+            <StackLayout IsVisible="{Binding IsProcessing}" HorizontalOptions="Center">
+                <ActivityIndicator IsRunning="{Binding IsProcessing}" />
+                <Label Text="Validation in Progress..." Margin="0,10,0,0"/>
+            </StackLayout>
+
             <Button x:Name="StartValidateBtn"
-                    Text="Select a .docx document for validation" 
-                    SemanticProperties.Hint="Counts the number of times you click"
-                    Command="{Binding SelectDocumentCommand}"
-                    HorizontalOptions="Fill" />
+        Text="Validate Document"
+        Command="{Binding SelectDocumentCommand}"
+        FontSize="18"
+        IsVisible="{Binding IsImageVisible}"
+        TextColor="White"
+        Padding="14,10"
+        CornerRadius="25"
+        HorizontalOptions="Center"
+        WidthRequest="250"
+        HeightRequest="50">
+
+                <!-- Gradient Background -->
+                <Button.Background>
+                    <LinearGradientBrush>
+                        <GradientStop Color="#666699" Offset="0.0"/>
+                        <GradientStop Color="#005BBB" Offset="1.0"/>
+                    </LinearGradientBrush>
+                </Button.Background>
+
+                <!-- Button Shadow -->
+                <Button.Shadow>
+                    <Shadow Brush="Black" Offset="4,4" Opacity="0.3" Radius="8"/>
+                </Button.Shadow>
+
+                <!-- Press Effect (Only for Click, No Hover in MAUI) -->
+                <Button.Triggers>
+                    <Trigger TargetType="Button" Property="IsPressed" Value="True">
+                        <Setter Property="Scale" Value="0.95"/>
+                        <Setter Property="Opacity" Value="0.8"/>
+                    </Trigger>
+                </Button.Triggers>
+
+            </Button>
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>
