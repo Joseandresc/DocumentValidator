@@ -40,7 +40,6 @@ jobs:
       with:
         files: |
           ./publish/*.exe
-          ./publish/appsettings.json
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
