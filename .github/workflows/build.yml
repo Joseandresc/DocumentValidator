@@ -38,18 +38,13 @@ jobs:
         Copy-Item -Path "./appsettings.template.json" -Destination "./publish/appsettings.json"
 
     - name: Create GitHub release
-      uses: ghenaoi/create-release-action@v1
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
-        body: 'Release notes for version ${{ github.ref }}'
-
-    - name: Upload the release assets
       uses: softprops/action-gh-release@v1
       with:
         files: |
           ./publish/*.exe
-          ./publish/appsettings.json  # Only includes the template version
+          ./publish/appsettings.json
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Clean up
       run: |
