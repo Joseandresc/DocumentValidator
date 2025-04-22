@@ -18,31 +18,21 @@ jobs:
       with:
         dotnet-version: '8.0.x'
 
-    - name: Install dependencies
-      run: |
-        dotnet restore
-
-    - name: Replace appsettings.json with template
-      run: |
-        Copy-Item -Path appsettings.template.json -Destination appsettings.json -Force
+    - name: Restore dependencies
+      run: dotnet restore
 
     - name: Build the project
-      run: |
-        dotnet build --configuration Release
+      run: dotnet build DocumentValidator.csproj --configuration Release
 
     - name: Publish the app
-      run: |
-        dotnet publish DocumentValidator.csproj --configuration Release --no-build --framework net8.0-windows10.0.19041.0 --output ./publish --self-contained true -r win-x64
-
+      run: dotnet publish DocumentValidator.csproj --configuration Release --output ./publish --self-contained true -r win-x64 --framework net8.0-windows10.0.19041.0
 
     - name: Create GitHub release
       uses: softprops/action-gh-release@v1
       with:
-        files: |
-          ./publish/*.exe
+        files: ./publish/*.exe
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Clean up
-      run: |
-        Remove-Item -Recurse -Force ./publish
+      run: Remove-Item -Recurse -Force ./publish
