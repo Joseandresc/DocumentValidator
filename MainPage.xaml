@@ -64,9 +64,9 @@
                 </Grid.RowDefinitions>
 
                 <!-- Row 1: Semantic Validation -->
-                <Label Text="Semantic Validation" VerticalOptions="Center" Grid.Row="0" Grid.Column="0"/>
+                <Label Text="AI Validation" VerticalOptions="Center" Grid.Row="0" Grid.Column="0"/>
                 <Switch x:Name="SemanticValidationSwitch" VerticalOptions="Center" Grid.Row="0" Grid.Column="2" IsToggled="{Binding IsAIValidationEnabled}">
-                    >
+                    
                     <Switch.Resources>
                         <Style TargetType="Switch">
                             <Style.Triggers>
@@ -85,26 +85,7 @@
                     </Switch.Resources>
                 </Switch>
 
-                <!-- Row 2: Table Auto Format -->
-                <Label Text="Table Auto Format" VerticalOptions="Center" Grid.Row="1" Grid.Column="0"/>
-                <Switch x:Name="TableAutoFormatSwitch" VerticalOptions="Center" Grid.Row="1" Grid.Column="2" IsToggled="False">
-                    <Switch.Resources>
-                        <Style TargetType="Switch">
-                            <Style.Triggers>
-                                <DataTrigger TargetType="Switch" Binding="{Binding IsToggled, Source={x:Reference TableAutoFormatSwitch}}" Value="True">
-                                    <Setter Property="ThumbColor" Value="White"/>
-                                    <Setter Property="OnColor" Value="Green"/>
-                                </DataTrigger>
-                                <DataTrigger TargetType="Switch" Binding="{Binding IsToggled, Source={x:Reference TableAutoFormatSwitch}}" Value="False">
-                                    <Setter Property="ThumbColor" Value="Black"/>
-                                    <Setter Property="OnColor" Value="LightGray"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                            <Setter Property="WidthRequest" Value="60"/>
-                            <Setter Property="HeightRequest" Value="30"/>
-                        </Style>
-                    </Switch.Resources>
-                </Switch>
+                
             </Grid>
 
             <!-- This Grid holds the ActivityIndicator and a Label for the "Validation in Progress" message -->
