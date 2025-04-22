@@ -32,7 +32,7 @@ jobs:
 
     - name: Publish the app
       run: |
-        dotnet publish DocumentValidator.csproj --configuration Release --framework net8.0-windows10.0.19041.0 --output ./publish --self-contained true -r win-x64
+        dotnet publish DocumentValidator.csproj --configuration Release --no-build --framework net8.0-windows10.0.19041.0 --output ./publish --self-contained true -r win-x64
 
 
     - name: Create GitHub release
