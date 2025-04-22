@@ -18,6 +18,10 @@ jobs:
       with:
         dotnet-version: '8.0'
 
+    - name: Create appsettings.json from template
+      run: |
+        Copy-Item -Path "./appsettings.template.json" -Destination "./appsettings.json" -Force
+
     - name: Install dependencies
       run: |
         dotnet restore
@@ -29,13 +33,6 @@ jobs:
     - name: Publish the app
       run: |
         dotnet publish --configuration Release --output ./publish --self-contained true -r win-x64 --framework net8.0-windows10.0.19041.0
-
-    - name: Replace appsettings.json with appsettings.template.json
-      run: |
-        # Remove the appsettings.json file if it exists in the publish folder
-        Remove-Item -Path "./publish/appsettings.json" -Force -ErrorAction SilentlyContinue
-        # Copy appsettings.template.json to the publish folder as appsettings.json
-        Copy-Item -Path "./appsettings.template.json" -Destination "./publish/appsettings.json"
 
     - name: Create GitHub release
       uses: softprops/action-gh-release@v1
