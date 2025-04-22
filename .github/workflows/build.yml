@@ -1,38 +1,31 @@
-name: Build and Publish MAUI App
+name: Upload Prebuilt MAUI App to GitHub Release
 
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - 'v*.*.*'  # This triggers the action when a tag is pushed, e.g., v1.0.0
 
 jobs:
-  build:
+  upload:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout the code
+    - name: Checkout code
       uses: actions/checkout@v3
 
     - name: Set up .NET SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '8.0'
+        dotnet-version: '8.0.x'  # Ensure correct .NET version is installed
 
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Build the project
-      run: dotnet build DocumentValidator.csproj --configuration Release
-
-    - name: Publish the app
-      run: dotnet publish DocumentValidator.csproj --configuration Release --output ./publish --self-contained true -r win-x64 --framework net8.0-windows10.0.19041.0
-
-    - name: Create GitHub release
+    - name: Upload release assets
       uses: softprops/action-gh-release@v1
       with:
-        files: ./publish/*.exe
+        files: |
+          C:\Users\joseandresc\source\repos\DocumentValidator\bin\Release\net8.0-windows10.0.19041.0\win-x64\*  # This is the path to your built app
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Used to authenticate and push assets to GitHub Releases
 
     - name: Clean up
-      run: Remove-Item -Recurse -Force ./publish
+      run: |
+        Remove-Item -Recurse -Force C:\Users\joseandresc\source\repos\DocumentValidator\bin\Release\net8.0-windows10.0.19041.0\win-x64\*  # Clean up after upload
