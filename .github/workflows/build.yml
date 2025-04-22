@@ -3,7 +3,7 @@ name: Build and Publish MAUI App
 on:
   push:
     tags:
-      - 'v*.*.*'  # Trigger on version tags (e.g., v1.0.0)
+      - 'v*.*.*'
 
 jobs:
   build:
@@ -17,9 +17,14 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '8.0.x'
+
     - name: Install dependencies
       run: |
         dotnet restore
+
+    - name: Replace appsettings.json with template
+      run: |
+        Copy-Item -Path appsettings.template.json -Destination appsettings.json -Force
 
     - name: Build the project
       run: |
@@ -27,18 +32,18 @@ jobs:
 
     - name: Publish the app
       run: |
-        dotnet publish --configuration Release --output ./publish --self-contained true -r win-x64 --framework net8.0-windows10.0.19041.0
+        dotnet publish DocumentValidator.csproj --configuration Release --framework net8.0-windows10.0.19041.0 --output ./publish --self-contained true -r win-x64
+
 
     - name: Create GitHub release
       uses: softprops/action-gh-release@v1
       with:
         files: |
           ./publish/*.exe
-          ./publish/appsettings.template.json
+          ./publish/appsettings.json
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Clean up
       run: |
-        # Clean up build files (optional)
         Remove-Item -Recurse -Force ./publish
