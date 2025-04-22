@@ -89,5 +89,13 @@
 	  <None Update="appsettings.json">
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </None>
+		<ItemGroup>
+			<Content Include="appsettings.template.json">
+				<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+				<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+				<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+				<Link>appsettings.json</Link>
+			</Content>
+		</ItemGroup>
 	</ItemGroup>
 </Project>
