@@ -32,9 +32,9 @@ jobs:
 
     - name: Replace appsettings.json with appsettings.template.json
       run: |
-        # Remove the appsettings.json file if it exists
+        # Remove the appsettings.json file if it exists in the publish folder
         Remove-Item -Path "./publish/appsettings.json" -Force -ErrorAction SilentlyContinue
-        # Copy the appsettings.template.json to the publish directory
+        # Copy appsettings.template.json to the publish folder as appsettings.json
         Copy-Item -Path "./appsettings.template.json" -Destination "./publish/appsettings.json"
 
     - name: Create GitHub release
