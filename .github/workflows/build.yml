@@ -28,7 +28,7 @@ jobs:
 
     - name: Publish the app
       run: |
-        dotnet publish --configuration Release --output ./publish --self-contained true -r win-x64
+        dotnet publish --configuration Release --output ./publish --self-contained true -r win-x64 --framework net8.0-windows10.0.19041.0
 
     - name: Replace appsettings.json with appsettings.template.json
       run: |
