@@ -24,6 +24,7 @@ namespace DocumentValidator.ViewModels
         private bool _isProcessing;
         private readonly SemanticValidatorProcessor _semanticValidatorProcessor;
         private bool _isImageVisible = true;
+        private List<LinkValidationResult> _linkValidationResult;
         public bool IsImageVisible
         {
             get => _isImageVisible;
@@ -95,10 +96,10 @@ namespace DocumentValidator.ViewModels
                     await ValidateDocumentLinksAsync(stream);
                     if(IsAIValidationEnabled)
                     {
-                        //await ValidateTableFormatAsync(stream);
-                        await ValidateSemanticDocumentAsync(stream);
+                        
+                        //await ValidateSemanticDocumentAsync(stream);
                     }
-                   
+                 await HTMLResultsGenerator.GenerateHtmlReportAsync(_linkValidationResult);
                     //await ValidateTableFormatAsync(stream);
                 }
             }
@@ -122,11 +123,11 @@ namespace DocumentValidator.ViewModels
 
             // Call the method to validate hyperlinks
             var linkValidator = new LinkValidator(this);
-            var results = await linkValidator.ValidateDocumentLinks(documentStream);
+            _linkValidationResult = await linkValidator.ValidateDocumentLinks(documentStream);
             // Generate the results file
             var resultsFileGenerator = new ResultsFileGenerator();
             //await resultsFileGenerator.GenerateWorkbookAsync(results);
-            await HTMLResultsGenerator.GenerateHtmlReportAsync(results);
+            
             IsProcessing = false;
         }
 
