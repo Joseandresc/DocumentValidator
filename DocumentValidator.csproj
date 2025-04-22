@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+		<TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
 		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
 		<!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
 
@@ -85,17 +85,14 @@
 	  </MauiCss>
 	</ItemGroup>
 
+	<!-- Replace your current appsettings config with this: -->
 	<ItemGroup>
-	  <None Update="appsettings.json">
-	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-	  </None>
-		<ItemGroup>
-			<Content Include="appsettings.template.json">
-				<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-				<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-				<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-				<Link>appsettings.json</Link>
-			</Content>
-		</ItemGroup>
+		<None Remove="appsettings.json" />
+		<Content Include="appsettings.template.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+			<Link>appsettings.json</Link>
+		</Content>
 	</ItemGroup>
 </Project>
