@@ -63,8 +63,9 @@ namespace DocumentValidator.Core.DocumentProcessor
                                             {
                                                 _documentViewModel.AddLogMessage($"Validating URL: {url} - status code is: {response.StatusCode}");
                                             });
-                                        }
                                     results.Add(result);
+                                }
+                                    
                                    // _logger.LogInformation($"URL validation result: {url} - {(isValid ? "Valid" : "Invalid")} ({(int)response.StatusCode})");
                                 }
                                     catch (NotSupportedException ex) when (ex.Message.Contains("rhttps"))
@@ -97,7 +98,7 @@ namespace DocumentValidator.Core.DocumentProcessor
                Console.WriteLine($"An error occurred while validating links: {ex.Message}");
                 // Log the exception or handle it as needed
             }
-
+      
             return results;
         }
     }

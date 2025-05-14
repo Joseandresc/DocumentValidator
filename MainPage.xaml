@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="DocumentValidator.MainPage">
+             x:Class="DocumentValidator.MainPage"
+             BackgroundColor= "#333333">
     <ScrollView>
         <VerticalStackLayout Padding="30,0" Spacing="25">
             <StackLayout Padding="30">
@@ -16,7 +17,7 @@
             <Grid  IsVisible="{Binding IsImageVisible}"
 >
                 <Image x:Name="IconImage1"
-           Source="doc.png"
+           Source="doc_icon.png"
            Opacity="1"
            WidthRequest="300"
            HeightRequest="300"          
@@ -25,7 +26,7 @@
            HorizontalOptions="Center"/>
 
                 <Image x:Name="IconImage2"
-           Source="doc1.png"
+           Source="doc_icon2.png"
            Opacity="0"
             WidthRequest="300"
             HeightRequest="300"
@@ -38,16 +39,7 @@
             <Label Text="Document Validator"
                    Style="{StaticResource Headline}"
                    SemanticProperties.HeadingLevel="Level1" />
-            <ContentPage.Background>
-                <LinearGradientBrush>
-                    <GradientStop Color="#4A90E2" Offset="0.0" />
-                    <GradientStop Color="#D1E8FF" Offset="1.0" />
-                    <!-- Lighter Gray -->
-                </LinearGradientBrush>
-            </ContentPage.Background>
-
-
-
+          
 
             <Grid HorizontalOptions="Center" ColumnSpacing="20" RowSpacing="10" IsVisible="{Binding IsImageVisible}">
                 <!-- Define three columns: Label | Input Field | Toggle -->
