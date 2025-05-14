@@ -43,7 +43,7 @@ namespace DocumentValidator.Core.DocumentProcessor
                                 if (url != null)
                                     try
                                 {
-                                    var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Head, url));
+                                    var response = await _httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url));
                                         
 
                                         bool isValid = response.IsSuccessStatusCode;
