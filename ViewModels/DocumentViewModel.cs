@@ -99,7 +99,14 @@ namespace DocumentValidator.ViewModels
                         
                         //await ValidateSemanticDocumentAsync(stream);
                     }
-                 await HTMLResultsGenerator.GenerateHtmlReportAsync(_linkValidationResult);
+                    if (!_linkValidationResult.Any())
+                    {
+                        LogMessages.Add("No invalid links were found in this document");
+                    }
+                    else
+                    {
+                        await HTMLResultsGenerator.GenerateHtmlReportAsync(_linkValidationResult);
+                    }
                     //await ValidateTableFormatAsync(stream);
                 }
             }
