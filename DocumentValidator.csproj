@@ -49,6 +49,13 @@
 		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Compile Remove="Tests\**" />
+	  <EmbeddedResource Remove="Tests\**" />
+	  <MauiCss Remove="Tests\**" />
+	  <MauiXaml Remove="Tests\**" />
+	  <None Remove="Tests\**" />
+	</ItemGroup>
+	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.3" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="9.0.3" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.3" />
@@ -65,13 +72,10 @@
 
 	<ItemGroup>
 	  <Folder Include="Core\SemanticValidatorProcessor\" />
-	  <Folder Include="Tests\" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="appsettings.json">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Resource>
+	  <PRIResource Remove="Tests\**" />
 	</ItemGroup>
 
 </Project>

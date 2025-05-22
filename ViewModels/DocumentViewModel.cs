@@ -107,7 +107,6 @@ namespace DocumentValidator.ViewModels
                     {
                         await HTMLResultsGenerator.GenerateHtmlReportAsync(_linkValidationResult);
                     }
-                    //await ValidateTableFormatAsync(stream);
                 }
             }
             catch (Exception ex)
@@ -136,6 +135,7 @@ namespace DocumentValidator.ViewModels
             //await resultsFileGenerator.GenerateWorkbookAsync(results);
             
             IsProcessing = false;
+            IsImageVisible = true;
         }
 
         private async Task ValidateTableFormatAsync(Stream documentStream)
